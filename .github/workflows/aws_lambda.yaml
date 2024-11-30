@@ -1,0 +1,60 @@
+name: Manual Deploy Lambda
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_notes:
+        description: 'Notes for this deployment'
+        required: false
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Display deploy information
+      run: |
+        echo "🚀 Starting production deployment"
+        echo "📝 Deploy notes: ${{ github.event.inputs.deploy_notes }}"
+
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Create deployment package
+      run: |
+        zip -r function.zip . \
+          -x '*.git*' \
+          -x '*wrangler*' \
+          -x '*.env*' \ 
+          -x 'node_modules/wrangler/*' \
+          -x 'node_modules/@*' \
+          -x '*.toml' \
+          -x 'wrangler_local_deploy.sh'
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Deploy to Lambda
+      run: |
+        aws lambda update-function-code \
+          --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
+          --zip-file fileb://function.zip
+
+    - name: Deployment Summary
+      run: |
+        echo "✅ Deployed successfully to production"
+        echo "🕒 Deployment time: $(date)"
+        echo "👤 Triggered by: ${{ github.actor }}"
