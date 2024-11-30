@@ -1,0 +1,10 @@
+name = "patreon-rss"
+main = "../../src/handlers/worker.js"
+
+compatibility_date = "2024-01-01"
+
+[env.production]
+workers_dev = false
+
+[observability]
+enabled = true

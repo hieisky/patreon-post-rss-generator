@@ -1,0 +1,25 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # This pattern matches semantic versioning tags like v1.0.0
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Deploy using Wrangler
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+          WORKER_DOMAIN: ${{ secrets.WORKER_DOMAIN }}
+        run: wrangler deploy --config ./config/cloudflare/wrangler.toml > /dev/null 2>&1
