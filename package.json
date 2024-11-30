@@ -2,10 +2,13 @@
   "name": "patreon-post-rss-service",
   "version": "v0.1.0",
   "type": "module",
+  "license": "MIT",
   "main": "src/handlers/lambda.js",
   "scripts": {
     "worker-dev": "wrangler dev --config config/cloudflare/wrangler-dev.toml",
     "worker-publish": "./script/wrangler_local_deploy.sh",
+    "zip": "rm function.zip && zip -r function.zip . -x '*.git*' -x '*wrangler*' -x '*.env*' -x 'node_modules/wrangler/*' -x 'node_modules/@*' -x '*.toml' -x 'wrangler_local_deploy.sh'",
+    "test-lambda": "lambda-local -f ./src/handlers/lambda.js -h handler -e ./config/aws/test-event.json"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.119",
