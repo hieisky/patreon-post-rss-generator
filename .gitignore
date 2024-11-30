@@ -1,0 +1,15 @@
+# Env files
+config/env/.env
+
+# Local development
+.DS_Store
+.vscode/
+.wrangler/
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.zip

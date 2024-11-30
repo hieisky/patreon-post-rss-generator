@@ -1,0 +1,14 @@
+{
+  "name": "patreon-post-rss-service",
+  "version": "v0.1.0",
+  "type": "module",
+  "main": "src/handlers/lambda.js",
+  "scripts": {
+    "worker-dev": "wrangler dev --config config/cloudflare/wrangler-dev.toml",
+    "worker-publish": "./script/wrangler_local_deploy.sh",
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.119",
+    "wrangler": "^3.91.0"
+  }
+}
