@@ -1,0 +1,9 @@
+@name=Music
+
+GET https://www.patreon.com/api/search
+?q={{name}}&page[size]=5
+&src=navbar
+&json-api-version=1.0
+&include=[] 
+Accept-Encoding: gzip, deflate, br, zstd
+Accept: application/json
