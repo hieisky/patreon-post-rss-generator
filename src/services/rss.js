@@ -21,7 +21,7 @@ export function generateRSS(data) {
                 <title>${escapeXml(post.attributes.title || '')}</title>
                 <link>${escapeXml(post.attributes.url || '')}</link>
                 <description><![CDATA[
-                    ${post.attributes.image.thumb_url ? `<img src="${post.attributes.image.thumb_url}" /><br />` : ''}
+                    ${post.attributes.image?.thumb_url ? `<img src="${post.attributes.image.thumb_url}" /><br />` : ''}
                     ${post.attributes.teaser_text}
                     <a href="${escapeXml(post.attributes.url)}">View in Patreon</a>
                 ]]></description>
