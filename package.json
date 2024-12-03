@@ -7,8 +7,9 @@
   "scripts": {
     "worker-dev": "wrangler dev --config config/cloudflare/wrangler-dev.toml",
     "worker-publish": "./script/wrangler_local_deploy.sh",
-    "zip": "rm function.zip && zip -r function.zip . -x '*.git*' -x '*wrangler*' -x '*.env*' -x 'node_modules/wrangler/*' -x 'node_modules/@*' -x '*.toml' -x 'wrangler_local_deploy.sh'",
-    "test-lambda": "lambda-local -f ./src/handlers/lambda.js -h handler -e ./config/aws/test-event.json"
+    "clean-zip": "rm -f function.zip",
+    "zip": "npm run clean-zip && zip -r function.zip . -x '*.git*' -x '*wrangler*' -x '*.env*' -x 'node_modules/wrangler/*' -x 'node_modules/@*' -x '*.toml' -x 'wrangler_local_deploy.sh'",
+    "deploy-lambda": "npm run zip && ./script/aws_lambda_func_deploy.sh"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.119",
