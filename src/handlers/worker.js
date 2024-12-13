@@ -10,6 +10,7 @@ export default {
 
             const url = new URL(request.url);
             const campaignId = url.searchParams.get('campaign_id');
+            const userDefinedTags = url.searchParams.get('user_defined_tags');
 
             if (!campaignId) {
                 return new Response('Campaign ID is required in query string', {
@@ -21,7 +22,7 @@ export default {
                 });
             }
 
-            const data = await fetchPatreonData(campaignId);
+            const data = await fetchPatreonData(campaignId, userDefinedTags);
             const rss = generateRSS(data);
 
             return new Response(rss, {

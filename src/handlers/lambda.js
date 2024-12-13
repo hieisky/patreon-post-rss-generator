@@ -4,6 +4,7 @@ import { generateRSS } from '../services/rss.js';
 export const handler = async (event, context) => {
     try {
         const campaignId = event.queryStringParameters?.campaign_id;
+        const userDefinedTags = event.queryStringParameters?.user_defined_tags;
 
         if (!campaignId) {
             return {
@@ -16,7 +17,7 @@ export const handler = async (event, context) => {
             };
         }
 
-        const data = await fetchPatreonData(campaignId);
+        const data = await fetchPatreonData(campaignId, userDefinedTags);
         const rss = generateRSS(data);
 
         return {

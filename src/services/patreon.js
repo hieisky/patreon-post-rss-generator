@@ -1,4 +1,4 @@
-export function prepareUrl(campaignId) {
+export function prepareUrl(campaignId, userDefinedTags) {
     const apiUrl = new URL('https://www.patreon.com/api/posts');
     const params = {
         'fields[post]': 'content,created_at,published_at,title,url,teaser_text,image,thumbnail,thumbnail_url',
@@ -11,6 +11,11 @@ export function prepareUrl(campaignId) {
         'json-api-version': '1.0'
     };
     
+    if (userDefinedTags) {
+        console.log('Filtering data by user_defined_tags:', userDefinedTags);
+        params['filter[tag]'] = userDefinedTags;
+    }
+
     Object.keys(params).forEach(key => 
         apiUrl.searchParams.append(key, params[key])
     );
@@ -18,9 +23,14 @@ export function prepareUrl(campaignId) {
     return apiUrl;
 }
 
-export async function fetchPatreonData(campaignId) {
-    const apiUrl = prepareUrl(campaignId);
-    const response = await fetch(apiUrl);
+export async function fetchPatreonData(campaignId, userDefinedTags) {
+    const apiUrl = prepareUrl(campaignId, userDefinedTags);
+    const response = await fetch(apiUrl, {
+        headers: {
+            'Accept-Encoding': 'gzip, deflate, br, zstd',
+            'Accept': 'application/vnd.api+json',
+        }
+    });
 
     if (!response.ok) {
         const errorText = await response.text();
@@ -28,5 +38,5 @@ export async function fetchPatreonData(campaignId) {
         throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}, headers: ${responseHeadersString}`);
     }
 
-    return response.json();
+    return await response.json();
 }
