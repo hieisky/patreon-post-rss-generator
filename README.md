@@ -1,6 +1,6 @@
 # Patreon RSS Generator
 
-A Cloudflare Worker that generates RSS feeds for Patreon campaigns, allowing you to follow creators' posts using any RSS reader.
+A AWS Lambda function or Cloudflare Worker that generates RSS feeds for Patreon campaigns, allowing you to follow creators' posts using any RSS reader.
 
 Also, you can deploy this worker to AWS Lambda.
 
@@ -23,6 +23,7 @@ https://[your-aws-lambda-api-gateway-domain]/?campaign_id=[patreon-campaign-id]
 ### Query Parameters
 
 - `campaign_id` (required): The Patreon campaign ID you want to generate an RSS feed for
+- `user_defined_tags` (optional): A comma-separated list of tags you want to include in the feed. If not provided, all tags will be included.
 
 ## Limitations
 
