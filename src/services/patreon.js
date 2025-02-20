@@ -1,4 +1,4 @@
-export function prepareUrl(campaignId, userDefinedTags) {
+export function prepareUrl(campaignId, userDefinedTags, mediaType) {
     const apiUrl = new URL('https://www.patreon.com/api/posts');
     const params = {
         'fields[post]': 'content,created_at,published_at,title,url,teaser_text,image,thumbnail,thumbnail_url',
@@ -16,6 +16,11 @@ export function prepareUrl(campaignId, userDefinedTags) {
         params['filter[tag]'] = userDefinedTags;
     }
 
+    if (mediaType) {
+        console.log('Filtering data by media_types:', mediaType);
+        params['filter[media_types]'] = mediaType
+    }
+
     Object.keys(params).forEach(key => 
         apiUrl.searchParams.append(key, params[key])
     );
@@ -23,8 +28,8 @@ export function prepareUrl(campaignId, userDefinedTags) {
     return apiUrl;
 }
 
-export async function fetchPatreonData(campaignId, userDefinedTags) {
-    const apiUrl = prepareUrl(campaignId, userDefinedTags);
+export async function fetchPatreonData(campaignId, userDefinedTags, mediaType) {
+    const apiUrl = prepareUrl(campaignId, userDefinedTags, mediaType);
     const response = await fetch(apiUrl, {
         headers: {
             'Accept-Encoding': 'gzip, deflate, br, zstd',

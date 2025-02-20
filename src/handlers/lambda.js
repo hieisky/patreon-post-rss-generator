@@ -5,6 +5,7 @@ export const handler = async (event, context) => {
     try {
         const campaignId = event.queryStringParameters?.campaign_id;
         const userDefinedTags = event.queryStringParameters?.user_defined_tags;
+        const mediaType = event.queryStringParameters?.media_type;
 
         if (!campaignId) {
             return {
@@ -17,7 +18,7 @@ export const handler = async (event, context) => {
             };
         }
 
-        const data = await fetchPatreonData(campaignId, userDefinedTags);
+        const data = await fetchPatreonData(campaignId, userDefinedTags, mediaType);
         const rss = generateRSS(data);
 
         return {
