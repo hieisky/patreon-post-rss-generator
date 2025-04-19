@@ -15,7 +15,7 @@ else
     echo "Creating AWS Lambda Function"
     aws lambda create-function \
         --function-name $AWS_LAMBDA_FUNCTION_NAME \
-        --runtime nodejs18.x \
+        --runtime nodejs20.x \
         --role $AWS_LAMBDA_FUNCTION_ROLE \
         --handler $AWS_LAMBDA_FUNCTION_HANDLER \
         --zip-file fileb://function.zip > /dev/null 2>&1
