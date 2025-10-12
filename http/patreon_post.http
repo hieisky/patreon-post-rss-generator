@@ -2,16 +2,12 @@
 
 // Get all posts by campaign_id
 GET https://www.patreon.com/api/posts
-?filter[campaign_id]={{campaign_id}}
+?fields[post]=content,content_teaser_text,created_at,published_at,title,url,teaser_text,image,thumbnail,thumbnail_url
 # &filter[tag]=user_tag_1,user_tag_2
-&fields[post]=content,created_at,published_at,title,url,teaser_text,image,thumbnail,thumbnail_url
+&filter[campaign_id]={{campaign_id}}
 &fields[user]=full_name,url
 &fields[post_tag]=tag_type,value
 &filter[is_draft]=false
-&filter[is_public]=false
 #&filter[media_types]=video
-&include=campaign,user_defined_tags
+&include=campaign,user_defined_tags,rss_synced_feed
 &sort=-published_at
-&json-api-version=1.0
-Accept-Encoding: gzip, deflate, br, zstd
-Accept: application/json
