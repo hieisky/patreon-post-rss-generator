@@ -22,7 +22,7 @@ export function generateRSS(data) {
                 <link>${escapeXml(post.attributes.url || '')}</link>
                 <description><![CDATA[
                     ${post.attributes.image?.thumb_url ? `<img src="${post.attributes.image.thumb_url}" /><br />` : ''}
-                    ${post.attributes.teaser_text}
+                    ${post.attributes.content ?? post.attributes.teaser_text ?? post.attributes.content_teaser_text}
                     <a href="${escapeXml(post.attributes.url)}">View in Patreon</a>
                 ]]></description>
                 <pubDate>${new Date(post.attributes.published_at).toUTCString()}</pubDate>

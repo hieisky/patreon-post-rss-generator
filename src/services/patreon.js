@@ -1,14 +1,13 @@
 export function prepareUrl(campaignId, userDefinedTags, mediaType) {
     const apiUrl = new URL('https://www.patreon.com/api/posts');
     const params = {
-        'fields[post]': 'content,created_at,published_at,title,url,teaser_text,image,thumbnail,thumbnail_url',
+        'fields[post]': 'content,content_teaser_text,created_at,published_at,title,url,teaser_text,image,thumbnail,thumbnail_url',
         'fields[user]': 'full_name,url',
         'fields[post_tag]': 'tag_type,value',
         'filter[campaign_id]': campaignId,
         'filter[is_draft]': 'false',
         'include': 'campaign',
-        'sort': '-published_at',
-        'json-api-version': '1.0'
+        'sort': '-published_at'
     };
     
     if (userDefinedTags) {
