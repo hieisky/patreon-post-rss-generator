@@ -4,6 +4,9 @@
   "type": "module",
   "license": "MIT",
   "main": "src/handlers/lambda.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "worker-dev": "wrangler dev --config config/cloudflare/wrangler-dev.toml",
     "worker-publish": "./script/wrangler_local_deploy.sh",

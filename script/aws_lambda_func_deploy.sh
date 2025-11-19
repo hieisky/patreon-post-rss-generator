@@ -11,11 +11,16 @@ if [ $? -eq 0 ]; then
     aws lambda update-function-code \
         --function-name $AWS_LAMBDA_FUNCTION_NAME \
         --zip-file fileb://function.zip > /dev/null 2>&1
+
+    # Update runtime configuration to nodejs22.x
+    aws lambda update-function-configuration \
+        --function-name $AWS_LAMBDA_FUNCTION_NAME \
+        --runtime nodejs22.x > /dev/null 2>&1
 else
     echo "Creating AWS Lambda Function"
     aws lambda create-function \
         --function-name $AWS_LAMBDA_FUNCTION_NAME \
-        --runtime nodejs20.x \
+        --runtime nodejs22.x \
         --role $AWS_LAMBDA_FUNCTION_ROLE \
         --handler $AWS_LAMBDA_FUNCTION_HANDLER \
         --zip-file fileb://function.zip > /dev/null 2>&1
