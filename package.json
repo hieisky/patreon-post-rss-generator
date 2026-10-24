@@ -5,17 +5,20 @@
   "license": "MIT",
   "main": "src/handlers/lambda.js",
   "engines": {
-    "node": ">=22.0.0"
+    "node": "^22.23.4 || ^24.22.1"
   },
   "scripts": {
     "worker-dev": "wrangler dev --config config/cloudflare/wrangler-dev.toml",
     "worker-publish": "./script/wrangler_local_deploy.sh",
     "clean-zip": "rm -f function.zip",
-    "zip": "npm run clean-zip && zip -r function.zip . -x '*.git*' -x '*wrangler*' -x '*.env*' -x 'node_modules/wrangler/*' -x 'node_modules/@*' -x '*.toml' -x 'wrangler_local_deploy.sh'",
+    "zip": "npm run clean-zip && zip -r function.zip src package.json",
     "deploy-lambda": "npm run zip && ./script/aws_lambda_func_deploy.sh"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.119",
-    "wrangler": "^3.91.0"
+    "wrangler": "4.152.0"
+  },
+  "resolutions": {
+    "wrangler/miniflare/undici": "7.30.1"
   }
 }
