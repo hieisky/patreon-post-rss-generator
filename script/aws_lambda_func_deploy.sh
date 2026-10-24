@@ -1,37 +1,37 @@
 #!/bin/bash
 # prepare environment variables from config/env/.env
+set -e
+
+cleanup() {
+    rm -f function.zip || true
+}
+trap cleanup EXIT
+
 set -a
 source config/env/.env
 set +a
 
-# check if AWS Function is already deployed
-aws lambda get-function --function-name $AWS_LAMBDA_FUNCTION_NAME > /dev/null 2>&1
-if [ $? -eq 0 ]; then
+# Only create a function when AWS confirms that it does not exist. Other lookup
+# failures (for example, missing permissions or network errors) must be surfaced.
+if lookup_error="$(aws lambda get-function --function-name "$AWS_LAMBDA_FUNCTION_NAME" 2>&1 >/dev/null)"; then
     echo "Updating AWS Lambda Function"
-    aws lambda update-function-code \
-        --function-name $AWS_LAMBDA_FUNCTION_NAME \
-        --zip-file fileb://function.zip > /dev/null 2>&1
-
-    # Update runtime configuration to nodejs22.x
-    aws lambda update-function-configuration \
-        --function-name $AWS_LAMBDA_FUNCTION_NAME \
-        --runtime nodejs22.x > /dev/null 2>&1
+    script/aws_lambda_func_update.sh "$AWS_LAMBDA_FUNCTION_NAME"
 else
-    echo "Creating AWS Lambda Function"
-    aws lambda create-function \
-        --function-name $AWS_LAMBDA_FUNCTION_NAME \
-        --runtime nodejs22.x \
-        --role $AWS_LAMBDA_FUNCTION_ROLE \
-        --handler $AWS_LAMBDA_FUNCTION_HANDLER \
-        --zip-file fileb://function.zip > /dev/null 2>&1
+    lookup_status=$?
+    if [[ "$lookup_error" == *ResourceNotFoundException* ]]; then
+        echo "Creating AWS Lambda Function"
+        aws lambda create-function \
+            --function-name "$AWS_LAMBDA_FUNCTION_NAME" \
+            --runtime nodejs22.x \
+            --role "$AWS_LAMBDA_FUNCTION_ROLE" \
+            --handler "$AWS_LAMBDA_FUNCTION_HANDLER" \
+            --zip-file fileb://function.zip > /dev/null
+        aws lambda wait function-active \
+            --function-name "$AWS_LAMBDA_FUNCTION_NAME"
+    else
+        printf '%s\n' "$lookup_error" >&2
+        exit "$lookup_status"
+    fi
 fi
 
-# print the result
-if [ $? -eq 0 ]; then
-    echo "AWS Lambda Function Deployed Successfully"
-else
-    echo "Failed to Deploy AWS Lambda Function"
-fi
-
-# Remove the function.zip file
-rm function.zip
+echo "AWS Lambda Function Deployed Successfully"

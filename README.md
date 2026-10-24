@@ -35,24 +35,28 @@ https://[your-aws-lambda-api-gateway-domain]/?campaign_id=[patreon-campaign-id]
 
 ### Prerequisites
 
-- Node.js (latest LTS version)
+- Node.js `^22.23.4 || ^24.22.1`
+- Yarn 1.22.22
 - Cloudflare Workers account / AWS account
-- Wrangler CLI 
 - AWS Account and AWS Role that able to create and run Lambda functions
 
 ### Configuration
 
-1. Run `yarn install` or `npm install` to install dependencies.
+1. Run `yarn install --frozen-lockfile` to install the versions recorded in `yarn.lock`.
+
+   AWS Lambda's `nodejs22.x` managed runtime does not pin a Node.js security patch. Before deploying, verify its runtime is Node.js 22.23.4 or later and configure the managed runtime update setting appropriate for your deployment. This repository cannot verify the deployed Lambda runtime.
+
+   The Yarn resolution pins Miniflare's `undici` to 7.30.1 for [CVE-2026-109869 / GHSA-xjj6-f33q-929c](https://github.com/advisories/GHSA-xjj6-f33q-929c). Remove it when Wrangler's upstream dependency graph includes a patched version.
 
 2. Set up the following secrets in your GitHub repository:
    - If you are using Cloudflare Workers:
      - `CLOUDFLARE_API_TOKEN`
      - `CLOUDFLARE_ACCOUNT_ID`
    - If you are using AWS Lambda:
-     - `AWS_PROFILE`
+     - `AWS_ACCESS_KEY_ID`
+     - `AWS_SECRET_ACCESS_KEY`
      - `AWS_REGION`
-     - `AWS_LAMBDA_FUNCTION_NAME`
-     - `AWS_LAMBDA_ROLE_ARN`
+     - `LAMBDA_FUNCTION_NAME`
 
 ## Local Run
 

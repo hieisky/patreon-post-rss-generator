@@ -11,10 +11,17 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
 
-      - name: Install Wrangler
-        run: npm install -g wrangler
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22.23.4
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Deploy using Wrangler
         env:
@@ -22,4 +29,4 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
           WORKER_DOMAIN: ${{ secrets.WORKER_DOMAIN }}
-        run: wrangler deploy --config ./config/cloudflare/wrangler.toml > /dev/null 2>&1
+        run: yarn wrangler deploy --config ./config/cloudflare/wrangler.toml
