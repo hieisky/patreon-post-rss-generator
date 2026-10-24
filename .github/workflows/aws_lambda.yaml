@@ -13,45 +13,39 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
 
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v7
       with:
-        node-version: '18'
-        cache: 'npm'
+        node-version: '22.23.4'
+        cache: 'yarn'
 
     - name: Display deploy information
+      env:
+        DEPLOY_NOTES: ${{ github.event.inputs.deploy_notes }}
       run: |
         echo "🚀 Starting production deployment"
-        echo "📝 Deploy notes: ${{ github.event.inputs.deploy_notes }}"
+        printf '📝 Deploy notes: %s\n' "$DEPLOY_NOTES"
 
     - name: Install dependencies
-      run: npm ci
-      
+      run: yarn install --frozen-lockfile
+
     - name: Create deployment package
-      run: |
-        zip -r function.zip . \
-          -x '*.git*' \
-          -x '*wrangler*' \
-          -x '*.env*' \ 
-          -x 'node_modules/wrangler/*' \
-          -x 'node_modules/@*' \
-          -x '*.toml' \
-          -x 'wrangler_local_deploy.sh'
+      run: yarn run zip
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v6
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Deploy to Lambda
+      env:
+        LAMBDA_FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME }}
       run: |
-        aws lambda update-function-code \
-          --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
-          --zip-file fileb://function.zip
+        script/aws_lambda_func_update.sh "$LAMBDA_FUNCTION_NAME"
 
     - name: Deployment Summary
       run: |
