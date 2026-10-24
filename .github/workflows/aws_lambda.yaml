@@ -31,6 +31,9 @@ jobs:
     - name: Install dependencies
       run: yarn install --frozen-lockfile
 
+    - name: Test deployment script
+      run: node --test test/aws_lambda_func_update.test.js
+
     - name: Create deployment package
       run: yarn run zip
 
